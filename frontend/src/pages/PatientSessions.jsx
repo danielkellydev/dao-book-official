@@ -80,7 +80,7 @@ function PatientSessions() {
         ) : (
           <>
             <h1 className="mx-2 my-10 text-center text-4xl">
-              Notes from{" "}
+              Prescription notes from{" "}
               {new Date(sessionData?.sessionDate).toLocaleDateString("au", {
                 weekday: "long",
                 day: "numeric",
@@ -89,22 +89,6 @@ function PatientSessions() {
               })}{" "}
             </h1>
             <div className="m-auto max-w-[500px]">
-              <DetailDisplay
-                labelText="Main Complaint"
-                valueText={sessionData.mainComplaint}
-              ></DetailDisplay>
-              <DetailDisplay
-                labelText="Session notes"
-                valueText={sessionData.sessionNotes}
-              ></DetailDisplay>
-              <DetailDisplay
-                labelText="Tongue"
-                valueText={sessionData.tongue}
-              ></DetailDisplay>
-              <DetailDisplay
-                labelText="Pulse"
-                valueText={sessionData.pulse}
-              ></DetailDisplay>
               <DetailDisplay
                 labelText="Formula name"
                 valueText={sessionData.formulaName}
@@ -127,10 +111,9 @@ function PatientSessions() {
           </>
         )}
         <Button
-          buttonText="Back"
-          isFullWidth={true}
-          onClick={() => navigate(-1)}
-        />
+        buttonText="Back"
+        onClick={() => navigate(-1)}
+      />
       </div>
     </div>
   );
