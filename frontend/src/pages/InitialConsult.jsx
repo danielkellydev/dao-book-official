@@ -6,6 +6,7 @@ import useErrorHandler from "../hooks/errorHandler";
 import useAuth from "../hooks/useAuth";
 import { sendData } from "../api/requests";
 
+
 function InitialConsult() {
   // Hooks
   const locationState = useLocation().state;
