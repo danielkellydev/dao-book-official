@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 export default function App() {
   const { pracName } = useAuth();
+  const pracFirstName = pracName?.split(" ")[0];
+  const capitalisedPracFirstName = pracFirstName?.charAt(0).toUpperCase() + pracFirstName?.slice(1);
   const navigate = useNavigate();
 
   const initialConsultClick = () => {
@@ -22,7 +24,7 @@ export default function App() {
     <div className="mt-20 flex flex-col items-center gap-7">
       <h1 className="text-4xl">
         Welcome to your clinic dashboard{" "}
-        {pracName ? `Dr. ${pracName}.` : "Doctor."}{" "}
+        {pracName ? `${capitalisedPracFirstName}.` : "Doctor."}{" "}
       </h1>
       <div className="flex gap-7">
         <DashboardButton

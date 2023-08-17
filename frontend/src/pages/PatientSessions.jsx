@@ -72,8 +72,8 @@ function PatientSessions() {
   }, []);
 
   return (
-    <div className="mx-8">
-      <div className="flex flex-col">
+    <div className="flex mx-8 justify-center">
+      <div className="flex flex-col w-2/3">
         {error && <p>{error}</p>}
         {loading ? (
           <p className="mt-4 text-center text-2xl font-bold">Loading...</p>
@@ -110,10 +110,13 @@ function PatientSessions() {
             </div>
           </>
         )}
+        <div className="flex justify-center mt-8">
         <Button
         buttonText="Back"
+        isFullWidth={true}
         onClick={() => navigate(-1)}
       />
+      </div>
       </div>
     </div>
   );

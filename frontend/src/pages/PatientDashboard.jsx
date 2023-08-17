@@ -4,6 +4,8 @@ import { patientViewRoutes } from "../api/routes";
 import SessionList from "../components/SessionList";
 import useAuth from "../hooks/useAuth";
 
+
+
 function PatientDashboard() {
   const { token, auth } = useAuth();
   const patientId = auth._id;
