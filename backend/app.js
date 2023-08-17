@@ -13,10 +13,12 @@ app.use(express.json());
 
 
 //CORS
-const allowedOrigins = ["http://localhost:5173", "http://www.daobook.com.au", "https://www.daobook.com.au", "http://daobook.com.au", "https://daobook.com.au", "localhost:5173", "www.daobook.com.au", "daobook.com.au"]
-
+// This is the temporary CORS policy for development
+const allowedOrigins = ['*']
 
 app.use(cors({ origin: allowedOrigins, credentials: true }));
+
+// const allowedOrigins = ["http://localhost:5173", "http://www.daobook.com.au", "https://www.daobook.com.au", "http://daobook.com.au", "https://daobook.com.au", "localhost:5173", "www.daobook.com.au", "daobook.com.au"]
 
 // app.use(cors(
 //   { origin: (origin, callback) => {

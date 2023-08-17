@@ -12,6 +12,7 @@ function AuthProvider({ children }) {
   const [token, setToken] = useState(localToken);
   const [pracName, setPracName] = useState(localPracName);
 
+
   // This checks that the auth isn't expired
   if (auth) {
     const isValid = isJwtExpired(auth);
