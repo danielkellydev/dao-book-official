@@ -6,9 +6,9 @@ const useLogout = () => {
   const navigate = useNavigate();
   return () => {
     localStorage.clear();
-    setAuth({});
-    setToken({});
-    setPracName({});
+    setAuth(null);
+    setToken(null);
+    setPracName(null);
     navigate("/login");
   };
 };

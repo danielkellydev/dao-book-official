@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { pracRoutes } from "../api/routes";
 import Button from "../atoms/Button";
@@ -11,77 +11,73 @@ import { useMediaQuery } from "react-responsive";
 import { fetchData, sendData } from "../api/requests";
 
 function Login() {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [error, setError] = useState(null);
 
-  const [error, setError] = useState();
   const { auth, setAuth, setToken, setPracName } = useAuth();
   const navigate = useNavigate();
   const isMobile = useMediaQuery({ query: "(max-width: 700px)" });
 
+  useEffect(() => {
+    if (auth) {
+      navigate("/");
+    }
+  }, [auth, navigate]);
+
   const handleSubmit = async (e) => {
-    setError(null);
     e.preventDefault();
+    setError(null);
 
     try {
-      // Post form data
       const res = await sendData({
         route: pracRoutes.login,
         data: formData,
         method: "POST",
       });
 
-      // Receive JWT and store in both ctx & storage
       const token = res.data.token;
+      console.log('Received Token:', token);
       const decodedToken = parseJwt(token);
-      setToken(token);
-      setAuth(decodedToken);
-      localStorage.setItem("auth", JSON.stringify(decodedToken));
-      localStorage.setItem("authToken", JSON.stringify(res.data.token));
-      // Use token to fetch practitioner name
+      console.log('Decoded Token:', decodedToken)
+      
       const pracNameRes = await fetchData({
         route: pracRoutes.get,
         id: decodedToken._id,
         token: token,
       });
 
-      // Store full name in ctx & storage
       const { firstName, lastName } = pracNameRes.data.prac;
       const fullName = `${firstName} ${lastName}`;
+
+      // First update React state
+      setToken(token);
+      setAuth(decodedToken);
       setPracName(fullName);
+
+      // Then store in localStorage
+      localStorage.setItem("auth", JSON.stringify(decodedToken));
+      localStorage.setItem("authToken", JSON.stringify(res.data.token));
       localStorage.setItem("pracName", JSON.stringify(fullName));
 
-      // Redirect
       navigate("/");
     } catch (error) {
       setError({
         status: error.response.status,
         message: error.response.data.message,
       });
+      return;  // Important to return here to avoid further code execution.
     }
   };
 
   const handleChange = (e) => {
-    setError(null);
-    const name = e.target.name;
-    const value = e.target.value;
-    setFormData((previousData) => ({
-      ...previousData,
-      [name]: value,
-    }));
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  if (isMobile) {
-    return <Navigate to="/mobile" />;
-  }
 
   return (
     <>
-      {auth ? (
-        <Navigate to="/" />
-      ) : (
+    {isMobile ? <Navigate to="/mobile" /> : null}
         <div className="grid h-screen grid-cols-2">
           <div className="flex items-center justify-center bg-daobook-amber p-10">
             <TitleLockup
@@ -102,6 +98,7 @@ function Login() {
                 labelText="Email"
                 placeholderText="susan@example.com"
                 isRequired={true}
+                doesAutocomplete={true}
                 onChange={handleChange}
               ></MemoFormInput>
               <MemoFormInput
@@ -140,7 +137,6 @@ function Login() {
             otherClasses="w-[200px] absolute right-4 top-4"
           ></Button>
         </div>
-      )}
     </>
   );
 }

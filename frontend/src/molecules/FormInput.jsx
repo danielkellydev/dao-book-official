@@ -1,19 +1,5 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useCallback } from "react";
 
-/**
- @typedef formInputProps
- @type {Object}
- @property {'text' | 'number' | 'email' | 'password' | 'date' | 'textarea' | 'checkbox'} type 
- @property {React.Dispatch<SetStateAction<string>>} setInputValue
- @property {string} labelText 
- @property {string} placeholderText 
- @property {boolean} doesAutocomplete 
- @property {boolean} isRequired 
- */
-
-/**
- * @param {formInputProps} props
- */
 function FormInput({
   type,
   name,
@@ -26,7 +12,7 @@ function FormInput({
 }) {
   const textareaRef = useRef(null);
 
-  const handleTextAreaChange = (e) => {
+  const handleTextAreaChange = useCallback((e) => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'inherit';
       const computed = window.getComputedStyle(textareaRef.current);
@@ -39,17 +25,18 @@ function FormInput({
     if (onChange && e) {
       onChange(e);
     }
-  };
+  }, [onChange]);
 
   useEffect(() => {
-    if (textareaRef.current && defaultValue) {
-      const syntheticEvent = {
-        target: textareaRef.current
-      };
-      handleTextAreaChange(syntheticEvent);
+    if (type === "textArea" && textareaRef.current && defaultValue) {
+      textareaRef.current.style.height = 'inherit';
+      const computed = window.getComputedStyle(textareaRef.current);
+      const height = parseInt(computed.getPropertyValue('border-top-width'), 10)
+                   + parseInt(computed.getPropertyValue('border-bottom-width'), 10)
+                   + textareaRef.current.scrollHeight;
+      textareaRef.current.style.height = `${height}px`;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultValue]);
+  }, [type, defaultValue]);
 
   return (
     <div>
