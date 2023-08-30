@@ -22,8 +22,7 @@ function FormInput({
   placeholderText,
   doesAutocomplete,
   isRequired,
-  defaultValue,
-  defaultChecked,
+  defaultValue
 }) {
   const textareaRef = useRef(null);
 
@@ -49,6 +48,7 @@ function FormInput({
       };
       handleTextAreaChange(syntheticEvent);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultValue]);
 
   return (
