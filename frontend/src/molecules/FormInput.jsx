@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
+
 /**
  @typedef formInputProps
  @type {Object}
@@ -24,50 +25,49 @@ function FormInput({
   defaultValue,
   defaultChecked,
 }) {
-  const formIsTextArea = type === "textArea";
-  const formIsCheckbox = type === "checkbox";
+  const textareaRef = useRef(null);
 
-  if (formIsCheckbox) {
-    return (
-      <div className="flex items-center gap-4">
-        <input
-          type={type}
-          id={name}
-          name={name}
-          onChange={onChange}
-          defaultChecked={defaultChecked}
-          className="h-4 w-4 border-[#DFDFDF]"
-        ></input>
-        <label
-          className="text-xl"
-          htmlFor={name}
-        >
-          {labelText}
-        </label>
-      </div>
-    );
-  }
+  const handleTextAreaChange = (e) => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'inherit';
+      const computed = window.getComputedStyle(textareaRef.current);
+      const height = parseInt(computed.getPropertyValue('border-top-width'), 10)
+                   + parseInt(computed.getPropertyValue('border-bottom-width'), 10)
+                   + textareaRef.current.scrollHeight;
+  
+      textareaRef.current.style.height = `${height}px`;
+    }
+    if (onChange && e) {
+      onChange(e);
+    }
+  };
+
+  useEffect(() => {
+    if (textareaRef.current && defaultValue) {
+      const syntheticEvent = {
+        target: textareaRef.current
+      };
+      handleTextAreaChange(syntheticEvent);
+    }
+  }, [defaultValue]);
 
   return (
     <div>
-      <label
-        className="block pb-2 text-xl"
-        htmlFor={name}
-      >
+      <label className="block pb-2 text-xl" htmlFor={name}>
         {labelText}
-        {isRequired && "* (required)"}
+        {isRequired && " * (required)"}
       </label>
-      {formIsTextArea ? (
+      {type === "textArea" ? (
         <textarea
-          type={type}
+          ref={textareaRef}
           id={name}
           name={name}
-          onChange={onChange}
+          onChange={handleTextAreaChange}
           placeholder={placeholderText}
-          autoComplete={doesAutocomplete}
+          autoComplete={doesAutocomplete ? "on" : "off"}
           required={isRequired}
           defaultValue={defaultValue}
-          className="w-full rounded-2xl border-2 border-[#DFDFDF] p-2 px-4 text-xl placeholder:text-[#DFDFDF]"
+          className="w-full rounded-2xl border-2 border-[#DFDFDF] p-2 px-4 text-xl placeholder:text-[#DFDFDF] resize-none overflow-hidden"
         ></textarea>
       ) : (
         <input
@@ -76,11 +76,11 @@ function FormInput({
           name={name}
           onChange={onChange}
           placeholder={placeholderText}
-          autoComplete={doesAutocomplete}
+          autoComplete={doesAutocomplete ? "on" : "off"}
           required={isRequired}
           defaultValue={defaultValue}
           className="w-full rounded-2xl border-2 border-[#DFDFDF] p-2 px-4 text-xl placeholder:text-[#DFDFDF]"
-        ></input>
+        />
       )}
     </div>
   );
@@ -89,5 +89,4 @@ function FormInput({
 const MemoFormInput = React.memo(FormInput);
 
 export default FormInput;
-
 export { MemoFormInput };
