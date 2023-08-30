@@ -247,6 +247,7 @@ function ReturnConsult() {
       </div>
       <ConsultForm
         formData={formData}
+        setFormData={setFormData}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
         isInitialConsult={false}
