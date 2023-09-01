@@ -8,7 +8,8 @@ function FormInput({
   placeholderText,
   doesAutocomplete,
   isRequired,
-  defaultValue
+  defaultValue, 
+  value
 }) {
   const textareaRef = useRef(null);
 
@@ -38,6 +39,8 @@ function FormInput({
     }
   }, [type, defaultValue]);
 
+  const isControlled = value !== undefined;
+
   return (
     <div>
       <label className="block pb-2 text-xl" htmlFor={name}>
@@ -53,7 +56,8 @@ function FormInput({
           placeholder={placeholderText}
           autoComplete={doesAutocomplete ? "on" : "off"}
           required={isRequired}
-          defaultValue={defaultValue}
+          defaultValue={!isControlled ? defaultValue : undefined}
+          value= {isControlled ? value : undefined}
           className="w-full rounded-2xl border-2 border-[#DFDFDF] p-2 px-4 text-xl placeholder:text-[#DFDFDF] resize-none overflow-hidden"
         ></textarea>
       ) : (
@@ -65,7 +69,8 @@ function FormInput({
           placeholder={placeholderText}
           autoComplete={doesAutocomplete ? "on" : "off"}
           required={isRequired}
-          defaultValue={defaultValue}
+          defaultValue={!isControlled ? defaultValue : undefined}
+          value= {isControlled ? value : undefined}
           className="w-full rounded-2xl border-2 border-[#DFDFDF] p-2 px-4 text-xl placeholder:text-[#DFDFDF]"
         />
       )}

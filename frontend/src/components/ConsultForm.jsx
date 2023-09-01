@@ -20,9 +20,14 @@ function ConsultForm({
   function handleCompositionChange(e) {
     handleChange(e); // Call your existing handleChange function
     const value = e.target.value;
-    console.log("Value: ", value)
-    const filteredSuggestions = chineseHerbs.filter(herb => herb.toLowerCase().includes(value.toLowerCase()));
-    setSuggestions(filteredSuggestions);
+    if (value) { // Only filter suggestions if value is non-empty
+      const filteredSuggestions = chineseHerbs.filter(herb => 
+        herb.toLowerCase().includes(value.toLowerCase())
+      );
+      setSuggestions(filteredSuggestions);
+    } else { 
+      setSuggestions([]); // Clear suggestions if input is empty
+    }
   
     setFormData(prevState => ({
         ...prevState,
@@ -31,7 +36,6 @@ function ConsultForm({
   }
 
 function selectSuggestion(herb) {
-  console.log("Selected herb: ", herb)
   setSuggestions([]); // Clear suggestions
 
   // Update the value of the composition input to the selected herb
@@ -40,6 +44,7 @@ function selectSuggestion(herb) {
       ...prevState,
       composition: herb
   }));
+  console.log(formData.composition)
 }
 
   return (

@@ -61,10 +61,17 @@ function Login() {
 
       navigate("/");
     } catch (error) {
-      setError({
-        status: error.response.status,
-        message: error.response.data.message,
-      });
+      if (error.response.status === 401) {
+        setError({
+          status: error.response.status,
+          message: "Invalid email or password.",
+        });
+      } else {
+        setError({
+          status: error.response.status,
+          message: error.response.data.message,
+        });
+      }
       return;  // Important to return here to avoid further code execution.
     }
   };
@@ -117,7 +124,7 @@ function Login() {
               {error && (
                 <>
                   <p className="font-bold">
-                    Something went wrong, please try again.
+                  {error.message}
                   </p>
                 </>
               )}
