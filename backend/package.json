@@ -5,8 +5,8 @@
   "main": "utils/server.js",
   "scripts": {
     "test": "jest --watchAll",
-    "start": "nodemon utils/server.js",
-    "dev": "node utils/server.js",
+    "start": "node utils/server.js",
+    "dev": "nodemon utils/server.js",
     "start:dev": "concurrently \"npm run start\" \"cd ../frontend && npm run dev\""
   },
   "author": "",
