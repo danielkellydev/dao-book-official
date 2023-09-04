@@ -5,11 +5,12 @@
   "main": "utils/server.js",
   "scripts": {
     "test": "jest --watchAll",
-    "start": "node utils/server.js",
-    "dev": "nodemon utils/server.js",
-    "build-client": "npm install --prefix client && npm run build --prefix client",
-    "start:dev": "concurrently \"npm run start\" \"cd client && npm run dev\"",
-    "heroku-postbuild": "npm run build-client"
+    "start": "concurrently --kill-others-on-fail \"npm run server\" \"npm run start --prefix client\"",
+    "server": "nodemon utils/server.js",
+    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run start --prefix client\"",
+    "build": "cd client && npm run build",
+    "install-client": "cd client && npm install",
+    "heroku-postbuild": "npm run build-client && npm run build"
   },
   "author": "",
   "license": "ISC",
@@ -35,5 +36,5 @@
   "engines": {
     "node": "19.8.1",
     "npm": "9.5.1"
-}
+  }
 }

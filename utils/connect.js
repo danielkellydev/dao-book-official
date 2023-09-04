@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 // Database connection function
 const connectToDatabase = () => {
@@ -6,10 +6,11 @@ const connectToDatabase = () => {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   };
-  console.log('Attempting to connect to the database...');
-  return mongoose.connect(process.env.DB_CONNECTION_STRING, connectionParams)
+  console.log("Attempting to connect to the database...");
+  return mongoose
+    .connect(process.env.DB_CONNECTION_STRING, connectionParams)
     .then(() => {
-      console.log('Connected to the database.');
+      console.log("Connected to the database.");
     })
     .catch((err) => {
       console.log(`Could not connect to the database. Exiting now...${err}`);
