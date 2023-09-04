@@ -2,12 +2,14 @@
     "name": "your-app-name",
     "version": "1.0.0",
     "scripts": {
-      "start": "node backend/server.js",
-      "heroku-postbuild": "cd frontend && npm install && npm run build"
+        "start": "node backend/server.js",
+        "heroku-postbuild": "cd frontend && npm install && npm run build"
     },
-    
     "engines": {
         "node": "19.8.1",
         "npm": "9.5.1"
-      }
-  }
+    },
+    "dependencies": {
+        "npm": "^10.0.0"
+    }
+}
