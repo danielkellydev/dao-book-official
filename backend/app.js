@@ -11,7 +11,6 @@ const sessionRoutes = require('./routes/sessionRoutes');
 const app = express();
 app.use(express.json());
 
-
 //CORS
 // This is the temporary CORS policy for development
 const allowedOrigins = ['*']
