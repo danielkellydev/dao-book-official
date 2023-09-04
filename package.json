@@ -2,7 +2,7 @@
     "name": "your-app-name",
     "version": "1.0.0",
     "scripts": {
-        "start": "utils/server.js"
+        "start": "node backend/utils/server.js"
     },
     "engines": {
         "node": "19.8.1",
