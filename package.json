@@ -2,8 +2,7 @@
     "name": "your-app-name",
     "version": "1.0.0",
     "scripts": {
-        "start": "node backend/utils/server.js",
-        "heroku-postbuild": "cd ../frontend && npm install && npm run build"
+        "start": "node backend/utils/server.js"
     },
     "engines": {
         "node": "19.8.1",
