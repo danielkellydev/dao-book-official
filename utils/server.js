@@ -9,14 +9,14 @@ const port = process.env.PORT || 5000;
 
 // Serve static assets
 
-  app.use(express.static(path.join(__dirname, "client", "dist")));
+  app.use(express.static(path.join(__dirname, "../client", "dist")));
 
 
 console.log("Connecting to the database...");
 connectToDatabase().then(() => {
 
   app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, "client", "dist", "index.html"))
+    res.sendFile(path.resolve(__dirname, "../client", "dist", "index.html"))
 })
 
   app.listen(port, () => {
