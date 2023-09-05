@@ -7,8 +7,7 @@
     "start": "node utils/server.js",
     "test": "jest --watchAll",
     "client": "cd client && npm start",
-    "dev": "concurrently \"npm run start\" \"npm run client\"",
-    "heroku-postbuild": "cd client && NPM_CONFIG_PRODUCTION=false npm install && npm run build"
+    "dev": "concurrently \"npm run start\" \"npm run client\""
   },
   "author": "",
   "license": "ISC",
