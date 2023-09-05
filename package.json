@@ -5,7 +5,7 @@
   "main": "utils/server.js",
   "scripts": {
     "test": "jest --watchAll",
-    "start": "concurrently --kill-others-on-fail \"npm run server\" \"npm run start --prefix client\"",
+    "start": "node utils/server.js",
     "server": "nodemon utils/server.js",
     "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run start --prefix client\"",
     "build": "cd client && npm run build",
