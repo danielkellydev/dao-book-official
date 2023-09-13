@@ -2,6 +2,114 @@ import Button from "../atoms/Button";
 import TextLink from "../atoms/TextLink";
 import MemoFormInput from "../molecules/FormInput";
 import React from "react";
+import { useState, useEffect } from "react";
+
+
+// Functions
+
+function HerbSuggestion({ herb, onSelect }) {
+  console.log(`Rendering suggestion: ${herb.name}`)
+  return (
+    <div onClick={() => onSelect(herb)}>
+      {herb.name}
+    </div>
+  );
+}
+
+function HerbInput({ onHerbSelect }) {
+  const [input, setInput] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
+
+  // You'll have your logic to fetch/update suggestions based on the input value
+  useEffect(() => {
+    // Fetch or filter herb suggestions based on the input value
+    // For now, I'm just using a mock list
+    const mockSuggestions = ['Rosemary', 'Basil', 'Thyme'].filter(herb => herb.toLowerCase().includes(input.toLowerCase()));
+    setSuggestions(mockSuggestions);
+    console.log(mockSuggestions);
+  }, [input]);
+
+  return (
+    <div>
+      <input 
+        value={input} 
+        onChange={e => setInput(e.target.value)} 
+        placeholder="Enter herb name"
+      />
+      <div>
+        {suggestions.map(herb => (
+          <HerbSuggestion 
+            key={herb}
+            herb={{ name: herb }}
+            onSelect={(selectedHerb) => {
+              setInput('');
+              onHerbSelect(selectedHerb);
+            }} 
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function GramInput({ onGramSubmit, grams, setGrams }) {
+  return (
+    <input
+      value={grams}
+      placeholder="Enter grams"
+      onChange={e => setGrams(e.target.value)}
+      onKeyDown={e => {
+        if (e.key === 'Enter' && grams) {
+          onGramSubmit(grams);
+          setGrams('');
+        }
+      }}
+    />
+  );
+}
+
+function SelectedHerbsDisplay({ herbs }) {
+  return (
+    <div className="composition-input">
+      {herbs.map(herb => (
+        <div key={herb.name} className="selected-herb">
+          {herb.name} - {herb.grams} grams
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function HerbComposer({ onHerbSelection }) {
+  const [selectedHerbs, setSelectedHerbs] = useState([]);
+  const [currentHerb, setCurrentHerb] = useState('');
+  const [grams, setGrams] = useState('');
+
+  const handleHerbSelect = (herb) => {
+    setCurrentHerb(herb.name);
+  };
+
+  const handleGramSubmit = (gramValue) => {
+    onHerbSelection(currentHerb, gramValue); 
+    setSelectedHerbs(prev => [...prev, { name: currentHerb, grams: gramValue }]);
+    setCurrentHerb('');
+  };
+
+  return (
+    <div>
+    {currentHerb ? (
+       <GramInput 
+          onGramSubmit={handleGramSubmit} 
+          grams={grams} 
+          setGrams={setGrams}
+       />
+    ) : (
+       <HerbInput onHerbSelect={handleHerbSelect} />
+    )}
+    <SelectedHerbsDisplay herbs={selectedHerbs} />
+ </div>
+  );
+}
 
 function ConsultForm({
   handleSubmit,
@@ -13,39 +121,14 @@ function ConsultForm({
 }) {
   const actionButtonText = "Save";
 
-  const [suggestions, setSuggestions] = React.useState([]);
-
-  const chineseHerbs = ["Ai ye", "Bai zhi", "Bai zhu", "Ban xia", "Bo he"];
-
-  function handleCompositionChange(e) {
-    handleChange(e); // Call your existing handleChange function
-    const value = e.target.value;
-    if (value) { // Only filter suggestions if value is non-empty
-      const filteredSuggestions = chineseHerbs.filter(herb => 
-        herb.toLowerCase().includes(value.toLowerCase())
-      );
-      setSuggestions(filteredSuggestions);
-    } else { 
-      setSuggestions([]); // Clear suggestions if input is empty
-    }
-  
+  const handleHerbSelection = (herbName, herbGrams) => {
+    const newComposition = `${formData.composition} ${herbName} - ${herbGrams}g; `;
     setFormData(prevState => ({
-        ...prevState,
-        composition: value
-    }));
-  }
-
-function selectSuggestion(herb) {
-  setSuggestions([]); // Clear suggestions
-
-  // Update the value of the composition input to the selected herb
-  // Assuming you have a state named formData and a function named setFormData for updating it:
-  setFormData(prevState => ({
       ...prevState,
-      composition: herb
-  }));
-  console.log(formData.composition)
-}
+      composition: newComposition
+    }));
+  };
+
 
   return (
     <div className="flex flex-col flex-wrap content-center justify-center gap-4">
@@ -90,6 +173,7 @@ function selectSuggestion(herb) {
         ></MemoFormInput>
         <hr className="my-10" />
         <h2 className="w-[700px] text-3xl">Prescription</h2>
+        <HerbComposer onHerbSelection={handleHerbSelection} />
         <MemoFormInput
           type="text"
           name="formulaName"
@@ -98,22 +182,11 @@ function selectSuggestion(herb) {
           defaultValue={formData.formulaName}
           isRequired={true}
         ></MemoFormInput>
-        <div className="autocomplete-suggestions relative z-10">
-          {suggestions.map(herb => (
-            <div 
-              key={herb} 
-              onClick={() => selectSuggestion(herb)}
-              className="cursor-pointer bg-white border p-2 hover:bg-gray-100"
-            >
-              {herb}
-            </div>
-          ))}
-        </div>
         <MemoFormInput
           type="textArea"
           name="composition"
           labelText="Composition"
-          onChange={handleCompositionChange}
+          onChange={handleChange}
           value={formData.composition}
           isRequired={true}
         ></MemoFormInput>
