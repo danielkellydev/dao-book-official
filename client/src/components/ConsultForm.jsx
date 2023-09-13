@@ -1,17 +1,20 @@
 import Button from "../atoms/Button";
 import TextLink from "../atoms/TextLink";
 import MemoFormInput from "../molecules/FormInput";
-import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 
 // Functions
+
+function RequiredLabel() {
+  return <span> * (required)</span>;
+}
 
 function HerbSuggestion({ herb, onSelect }) {
   console.log(`Rendering suggestion: ${herb.name}`)
   return (
     <div onClick={() => onSelect(herb)}>
-      {herb.name}
+      {herb.pinyinName} - {herb.latinName} ({herb.abbreviation})
     </div>
   );
 }
@@ -20,13 +23,23 @@ function HerbInput({ onHerbSelect }) {
   const [input, setInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
 
-  // You'll have your logic to fetch/update suggestions based on the input value
   useEffect(() => {
-    // Fetch or filter herb suggestions based on the input value
-    // For now, I'm just using a mock list
-    const mockSuggestions = ['Rosemary', 'Basil', 'Thyme'].filter(herb => herb.toLowerCase().includes(input.toLowerCase()));
-    setSuggestions(mockSuggestions);
-    console.log(mockSuggestions);
+    if (!input.trim()) {
+      setSuggestions([]); // Empty the suggestions if no input
+      return;
+    }
+
+    // Fetch the herb list from the herbs.json file
+    fetch('/herbs.json')
+      .then(response => response.json())
+      .then(data => {
+        // Filter herb suggestions based on the input value
+        const filteredSuggestions = data.filter(herb => herb.pinyinName.toLowerCase().includes(input.toLowerCase()));
+        setSuggestions(filteredSuggestions);
+      })
+      .catch(error => {
+        console.error("There was an error fetching the herbs list:", error);
+      });
   }, [input]);
 
   return (
@@ -34,13 +47,13 @@ function HerbInput({ onHerbSelect }) {
       <input 
         value={input} 
         onChange={e => setInput(e.target.value)} 
-        placeholder="Enter herb name"
+        placeholder="Enter herb name (Pinyin)"
       />
       <div>
         {suggestions.map(herb => (
           <HerbSuggestion 
-            key={herb}
-            herb={{ name: herb }}
+            key={herb.pinyinName}
+            herb={herb}
             onSelect={(selectedHerb) => {
               setInput('');
               onHerbSelect(selectedHerb);
@@ -53,8 +66,17 @@ function HerbInput({ onHerbSelect }) {
 }
 
 function GramInput({ onGramSubmit, grams, setGrams }) {
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
   return (
     <input
+      ref={inputRef}
       value={grams}
       placeholder="Enter grams"
       onChange={e => setGrams(e.target.value)}
@@ -68,25 +90,13 @@ function GramInput({ onGramSubmit, grams, setGrams }) {
   );
 }
 
-function SelectedHerbsDisplay({ herbs }) {
-  return (
-    <div className="composition-input">
-      {herbs.map(herb => (
-        <div key={herb.name} className="selected-herb">
-          {herb.name} - {herb.grams} grams
-        </div>
-      ))}
-    </div>
-  );
-}
-
 function HerbComposer({ onHerbSelection }) {
   const [selectedHerbs, setSelectedHerbs] = useState([]);
   const [currentHerb, setCurrentHerb] = useState('');
   const [grams, setGrams] = useState('');
 
   const handleHerbSelect = (herb) => {
-    setCurrentHerb(herb.name);
+    setCurrentHerb(herb.pinyinName);
   };
 
   const handleGramSubmit = (gramValue) => {
@@ -97,17 +107,16 @@ function HerbComposer({ onHerbSelection }) {
 
   return (
     <div>
-    {currentHerb ? (
-       <GramInput 
-          onGramSubmit={handleGramSubmit} 
-          grams={grams} 
-          setGrams={setGrams}
-       />
-    ) : (
-       <HerbInput onHerbSelect={handleHerbSelect} />
-    )}
-    <SelectedHerbsDisplay herbs={selectedHerbs} />
- </div>
+      {currentHerb ? (
+         <GramInput 
+            onGramSubmit={handleGramSubmit} 
+            grams={grams} 
+            setGrams={setGrams}
+         />
+      ) : (
+         <HerbInput onHerbSelect={handleHerbSelect} />
+      )}
+    </div>
   );
 }
 
@@ -173,7 +182,6 @@ function ConsultForm({
         ></MemoFormInput>
         <hr className="my-10" />
         <h2 className="w-[700px] text-3xl">Prescription</h2>
-        <HerbComposer onHerbSelection={handleHerbSelection} />
         <MemoFormInput
           type="text"
           name="formulaName"
@@ -182,13 +190,15 @@ function ConsultForm({
           defaultValue={formData.formulaName}
           isRequired={true}
         ></MemoFormInput>
+        <h2 className="block pb-2 text-xl">Composition <RequiredLabel /></h2>
+        <HerbComposer onHerbSelection={handleHerbSelection} />
         <MemoFormInput
           type="textArea"
           name="composition"
-          labelText="Composition"
+          labelText=""
           onChange={handleChange}
           value={formData.composition}
-          isRequired={true}
+          isRequired={false}
         ></MemoFormInput>
         <MemoFormInput
           type="textArea"
